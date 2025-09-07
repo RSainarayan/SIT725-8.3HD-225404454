@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title><%= product.name %></title>
+  </head>
+  <body>
+    <h1><%= product.name %></h1>
+    <p>SKU: <%= product.sku %></p>
+    <p>Quantity: <%= product.quantity %></p>
+    <p>Location: <%= product.location || '—' %></p>
+
+    <form action="/products/<%= product._id %>/delete" method="post" onsubmit="return confirm('Delete product?')">
+      <button type="submit">Delete</button>
+    </form>
+
+    <a href="/products">Back</a>
+  </body>
+</html>
