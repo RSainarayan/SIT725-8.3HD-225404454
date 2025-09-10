@@ -33,7 +33,7 @@
 
 			<section class="mt-4">
 				<h2>Recent Products</h2>
-				<div id="recent-products">Loading...</div>
+				<div id="recent-products" class="recent-products-list">Loading...</div>
 			</section>
 		</div>
 
@@ -49,7 +49,18 @@
 				document.getElementById(id).innerHTML = html;
 			}
 
-			loadCard('card-1', 'Total Products', '—');
+			// Update total products card with real-time quantity
+			async function updateTotalProductsCard() {
+				try {
+					const resp = await fetch('/products/data/total-quantity');
+					const data = await resp.json();
+					loadCard('card-1', 'Total Products', data.totalQuantity);
+				} catch (e) {
+					loadCard('card-1', 'Total Products', '—');
+				}
+			}
+			updateTotalProductsCard();
+
 			loadCard('card-2', 'Low Stock', '—');
 			loadCard('card-3', 'Pending Orders', '—');
 
@@ -57,11 +68,11 @@
 			async function loadRecent() {
 				const resp = await fetch('/products');
 				const text = await resp.text();
-				// crude: find the products list from returned HTML
-				const match = text.match(/<ul>[\s\S]*<\/ul>/);
+				// updated: find the products list from returned HTML with class selector
+				const match = text.match(/<ul class="product-list">[\s\S]*?<\/ul>/);
 				document.getElementById('recent-products').innerHTML = match ? match[0] : 'No data';
 			}
-					loadRecent();
+			loadRecent();
 
 					// show logged in user
 					(async function () {
@@ -74,5 +85,41 @@
 						} catch (e) {}
 					})();
 		</script>
+
+			<style>
+				.recent-products-list ul.product-list {
+					list-style: none;
+					padding: 0;
+					margin: 0;
+				}
+				.recent-products-list ul.product-list li {
+					background: #f1f5f9;
+					margin-bottom: 12px;
+					padding: 16px;
+					border-radius: 6px;
+					display: flex;
+					justify-content: space-between;
+					align-items: center;
+					box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+				}
+				.recent-products-list .product-info {
+					flex: 1;
+				}
+				.recent-products-list .product-name {
+					font-weight: 500;
+					color: #2563eb;
+					text-decoration: none;
+				}
+				.recent-products-list .product-meta {
+					color: #64748b;
+					font-size: 14px;
+					margin-top: 4px;
+				}
+				.recent-products-list .no-products {
+					text-align: center;
+					color: #64748b;
+					margin-top: 32px;
+				}
+			</style>
 	</body>
 </html>

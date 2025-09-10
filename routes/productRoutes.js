@@ -10,6 +10,8 @@ router.get('/:id', productController.pageShow);
 // API endpoints for client-side JS
 router.get('/data', productController.apiIndex);
 router.get('/data/:id', productController.apiShow);
+// API endpoint for total quantity
+router.get('/data/total-quantity', productController.apiTotalQuantity);
 
 // Create / delete use traditional form posts
 router.post('/', productController.create);
