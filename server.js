@@ -11,7 +11,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 app.set('io', io); // Make io accessible in controllers
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
 // View engine
 app.set('views', path.join(__dirname, 'views'));
