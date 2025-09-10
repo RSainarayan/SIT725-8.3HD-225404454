@@ -14,6 +14,13 @@ exports.apiShow = async (req, res) => {
   res.json(product);
 };
 
+// API: get total quantity of all products
+exports.apiTotalQuantity = async (req, res) => {
+  const products = await Product.find().lean();
+  const totalQuantity = products.reduce((sum, p) => sum + (p.quantity || 0), 0);
+  res.json({ totalQuantity });
+};
+
 // Serve static HTML pages from views folder (if needed elsewhere)
 exports.pageNew = (req, res) => {
   res.render('products/new');
