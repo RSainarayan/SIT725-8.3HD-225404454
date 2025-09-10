@@ -5,13 +5,15 @@ const productController = require('../controllers/productController');
 // Pages (static HTML served)
 router.get('/', productController.pageIndex);
 router.get('/new', productController.pageNew);
-router.get('/:id', productController.pageShow);
 
-// API endpoints for client-side JS
+// API endpoints for client-side JS (register before ':id' routes)
 router.get('/data', productController.apiIndex);
 router.get('/data/:id', productController.apiShow);
 // API endpoint for total quantity
 router.get('/data/total-quantity', productController.apiTotalQuantity);
+
+// Page-specific route (must come after API routes to avoid conflict)
+router.get('/:id', productController.pageShow);
 
 // Create / delete use traditional form posts
 router.post('/', productController.create);
