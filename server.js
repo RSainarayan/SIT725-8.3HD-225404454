@@ -6,6 +6,7 @@ const socketio = require('socket.io');
 
 const productRoutes = require('./routes/productRoutes');
 const uiRoutes = require('./routes/uiRoutes');
+const stockIntakeRoutes = require('./routes/stockIntakeRoutes');
 
 const app = express();
 const server = http.createServer(app);
@@ -36,6 +37,7 @@ app.use('/', uiRoutes);
 
 // API / resource routes
 app.use('/products', productRoutes);
+app.use('/stock-intake', stockIntakeRoutes);
 
 app.get('/', (req, res) => res.redirect('/login'));
 

@@ -16,9 +16,17 @@ exports.apiShow = async (req, res) => {
 
 // API: get total quantity of all products
 exports.apiTotalQuantity = async (req, res) => {
-  const products = await Product.find().lean();
-  const totalQuantity = products.reduce((sum, p) => sum + (p.quantity || 0), 0);
-  res.json({ totalQuantity });
+  try {
+    // Use aggregation to ensure numeric sum on the database side
+    const result = await Product.aggregate([
+      { $group: { _id: null, totalQuantity: { $sum: { $ifNull: ["$quantity", 0] } } } }
+    ]);
+    const totalQuantity = (result && result[0] && result[0].totalQuantity) ? result[0].totalQuantity : 0;
+    res.json({ totalQuantity });
+  } catch (err) {
+    console.error('Error computing total quantity', err);
+    res.status(500).json({ totalQuantity: 0 });
+  }
 };
 
 // Serve static HTML pages from views folder (if needed elsewhere)
