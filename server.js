@@ -1,11 +1,16 @@
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
+const http = require('http');
+const socketio = require('socket.io');
 
 const productRoutes = require('./routes/productRoutes');
 const uiRoutes = require('./routes/uiRoutes');
 
 const app = express();
+const server = http.createServer(app);
+const io = socketio(server);
+app.set('io', io); // Make io accessible in controllers
 const PORT = process.env.PORT || 3000;
 
 // View engine
@@ -52,7 +57,7 @@ mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
       }
     })().catch(() => {});
 
-    app.listen(PORT, () => console.log(`Server listening on http://localhost:${PORT}`));
+    server.listen(PORT, () => console.log(`Server listening on http://localhost:${PORT}`));
   })
   .catch(err => {
     console.error('MongoDB connection error:', err.message);

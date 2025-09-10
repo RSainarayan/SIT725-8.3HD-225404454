@@ -38,9 +38,13 @@ exports.pageShow = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-  const { name, sku, quantity, location } = req.body;
+  let { name, sku, quantity, location, weight } = req.body;
+  console.log('Received weight:', weight); // Debug log
+  // Convert weight to number, allow 0 and decimals
+  weight = weight === '' || weight === undefined ? null : parseFloat(weight);
   try {
-    await Product.create({ name, sku, quantity, location });
+    await Product.create({ name, sku, quantity, location, weight });
+    req.app.get('io').emit('productCreated', { name, sku, quantity, location, weight });
     res.redirect('/products');
   } catch (err) {
     res.status(400).send('Error creating product: ' + err.message);
@@ -48,6 +52,8 @@ exports.create = async (req, res) => {
 };
 
 exports.delete = async (req, res) => {
-  await Product.findByIdAndDelete(req.params.id);
+  const deleted = await Product.findByIdAndDelete(req.params.id);
+  // Emit socket event for deleted product
+  req.app.get('io').emit('productDeleted', { _id: req.params.id });
   res.redirect('/products');
 };
