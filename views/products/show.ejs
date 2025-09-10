@@ -63,9 +63,21 @@
         <div>Weight: <span style="color:#2563eb;font-weight:500;"> <%= product.weight != null ? product.weight : 0 %> </span> kg</div>
         <div>Location: <%= product.location || '—' %></div>
       </div>
-      <form action="/products/<%= product._id %>/delete" method="post" onsubmit="return confirm('Delete product?')">
+      <form id="deleteForm" action="/products/<%= product._id %>/delete" method="post">
         <button type="submit" class="btn btn-danger">Delete Product</button>
       </form>
+      <script>
+        document.getElementById('deleteForm').addEventListener('submit', async function(e) {
+          e.preventDefault();
+          if (!confirm('Delete product?')) return;
+          const resp = await fetch(this.action, { method: 'POST' });
+          if (resp.ok) {
+            window.location.href = '/dashboard.html';
+          } else {
+            alert('Error deleting product.');
+          }
+        });
+      </script>
       <a href="/dashboard.html" class="btn btn-secondary w-100 mb-2">&#8962; Home</a>
       <a href="/products" class="back-link">&#8592; Back to Products</a>
     </div>
