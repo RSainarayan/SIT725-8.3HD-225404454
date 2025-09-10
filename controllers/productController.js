@@ -53,7 +53,6 @@ exports.create = async (req, res) => {
 
 exports.delete = async (req, res) => {
   const deleted = await Product.findByIdAndDelete(req.params.id);
-  // Emit socket event for deleted product
   req.app.get('io').emit('productDeleted', { _id: req.params.id });
-  res.redirect('/products');
+  res.redirect('/dashboard.html');
 };
