@@ -16,17 +16,9 @@ exports.apiShow = async (req, res) => {
 
 // API: get total quantity of all products
 exports.apiTotalQuantity = async (req, res) => {
-  try {
-    // Use aggregation to ensure numeric sum on the database side
-    const result = await Product.aggregate([
-      { $group: { _id: null, totalQuantity: { $sum: { $ifNull: ["$quantity", 0] } } } }
-    ]);
-    const totalQuantity = (result && result[0] && result[0].totalQuantity) ? result[0].totalQuantity : 0;
-    res.json({ totalQuantity });
-  } catch (err) {
-    console.error('Error computing total quantity', err);
-    res.status(500).json({ totalQuantity: 0 });
-  }
+  const products = await Product.find().lean();
+  const totalQuantity = products.reduce((sum, p) => sum + (p.quantity || 0), 0);
+  res.json({ totalQuantity });
 };
 
 // Serve static HTML pages from views folder (if needed elsewhere)
@@ -63,4 +55,22 @@ exports.delete = async (req, res) => {
   const deleted = await Product.findByIdAndDelete(req.params.id);
   req.app.get('io').emit('productDeleted', { _id: req.params.id });
   res.redirect('/dashboard.html');
+};
+
+exports.pageEdit = async (req, res) => {
+  const product = await Product.findById(req.params.id).lean();
+  if (!product) return res.status(404).send('Product not found');
+  res.render('products/edit', { product });
+};
+
+exports.edit = async (req, res) => {
+  let { name, sku, quantity, location, weight } = req.body;
+  weight = weight === '' || weight === undefined ? null : parseFloat(weight);
+  try {
+    await Product.findByIdAndUpdate(req.params.id, { name, sku, quantity, location, weight });
+    req.app.get('io').emit('productUpdated', { _id: req.params.id, name, sku, quantity, location, weight });
+    res.redirect(`/products/${req.params.id}`);
+  } catch (err) {
+    res.status(400).send('Error updating product: ' + err.message);
+  }
 };
