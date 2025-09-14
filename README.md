@@ -13,4 +13,4 @@ Install dependencies and start the server (requires Node.js and MongoDB):
 
 	npm run dev
 
-The app will be available at http://localhost:3000 and has a simple products CRUD at /products.
+The app will be available at http://localhost:5000 and has a simple products CRUD at /products.
