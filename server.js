@@ -12,6 +12,15 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 app.set('io', io); // Make io accessible in controllers
+let liveUserCount = 0;
+io.on('connection', (socket) => {
+  liveUserCount++;
+  io.emit('userCount', liveUserCount);
+  socket.on('disconnect', () => {
+    liveUserCount--;
+    io.emit('userCount', liveUserCount);
+  });
+});
 const PORT = process.env.PORT || 5000;
 
 // View engine
@@ -42,7 +51,7 @@ app.use('/stock-intake', stockIntakeRoutes);
 app.get('/', (req, res) => res.redirect('/login'));
 
 // Connect to MongoDB (local by default)
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/warehouse';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/Wareniex';
 mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log('Connected to MongoDB');
