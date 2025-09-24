@@ -48,6 +48,15 @@ app.use('/', uiRoutes);
 app.use('/products', productRoutes);
 app.use('/stock-intake', stockIntakeRoutes);
 
+// --- Required HD endpoint: /api/student (no auth) ---
+app.get('/api/student', (_req, res) => {
+  res.json({
+    name: 'Sainarayan Rajasekaran',      
+    studentId: '225404454', 
+  });
+});
+
+
 app.get('/', (req, res) => res.redirect('/login'));
 
 // Connect to MongoDB (local by default)

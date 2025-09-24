@@ -1,0 +1,21 @@
+# Dockerfile (Node 20, tiny & fast)
+FROM node:20-alpine
+
+# Create app directory
+WORKDIR /app
+
+# Install prod deps first (layer caching)
+COPY package*.json ./
+RUN npm ci --omit=dev
+
+# Copy rest of the source
+COPY . .
+
+# Environment
+ENV NODE_ENV=production
+ENV PORT=5000
+# Let Express/Socket.IO listen on 0.0.0.0 inside the container
+EXPOSE 5000
+
+# Start your server
+CMD ["node", "server.js"]
