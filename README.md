@@ -58,7 +58,7 @@ You should see JSON similar to:
 
 6) Quick verification
 
-App/login page: http://localhost:5000/
+App/login page: http://localhost:5000/login
 
 Student endpoint: http://localhost:5000/api/student
 
